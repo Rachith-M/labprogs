@@ -2,123 +2,148 @@
 #include <stdlib.h>
 
 #define SIZE 10
-int queue[SIZE];
-int right = -1, left = -1;
 
-void enqueue_right(int);
-void enqueue_left(int);
-int dequeue_right();
-int dequeue_left();
-void display();
+int deque[SIZE];
+int front = -1, rear = -1;
 
-void main() {
-    int choice, val;
-    while (1) {
-        printf("\nEnter your choice:\n");
-        printf("1.Insert at right\n2.Insert at left\n3.Delete at right\n4.Delete at left\n5.Display\n6.Exit\n");
-        scanf("%d", &choice);
-        switch (choice) {
-            case 1:
-                printf("Enter the value to be inserted at right: ");
-                scanf("%d", &val);
-                enqueue_right(val);
-                break;
-            case 2:
-                printf("Enter the value to be inserted at left: ");
-                scanf("%d", &val);
-                enqueue_left(val);
-                break;
-            case 3:
-                dequeue_right();
-                break;
-            case 4:
-                dequeue_left();
-                break;
-            case 5:
-                display();
-                break;
-            case 6:
-                exit(0);
-            default:
-                printf("Invalid input! Please try again!\n");
-        }
-    }
+// ----- Utility functions -----
+int isEmpty() {
+    return (front == -1);
 }
 
-void enqueue_right(int value) {
-    if ((left == 0 && right == SIZE - 1) || (left == right + 1)) {
-        printf("Queue is full!\n");
+int isFull() {
+    return ((rear + 1) % SIZE == front);
+}
+
+// ----- Insert Left -----
+void insert_left(int val) {
+    if (isFull()) {
+        printf("Deque is FULL!\n");
         return;
     }
-    if (left == -1) {
-        left = right = 0;
-    } else if (right == SIZE - 1) {
-        right = 0;
+
+    if (isEmpty()) {
+        front = rear = 0;
     } else {
-        right++;
+        front = (front - 1 + SIZE) % SIZE;   // wrap-around backward
     }
-    queue[right] = value;
+
+    deque[front] = val;
 }
 
-void enqueue_left(int value) {
-    if ((left == 0 && right == SIZE - 1) || (left == right + 1)) {
-        printf("Queue is full!\n");
+// ----- Insert Right -----
+void insert_right(int val) {
+    if (isFull()) {
+        printf("Deque is FULL!\n");
         return;
     }
-    if (left == -1) {
-        left = right = 0;
-    } else if (left == 0) {
-        left = SIZE - 1;
+
+    if (isEmpty()) {
+        front = rear = 0;
     } else {
-        left--;
+        rear = (rear + 1) % SIZE;   // wrap-around forward
     }
-    queue[left] = value;
+
+    deque[rear] = val;
 }
 
-int dequeue_right() {
-    if (left == -1) {
-        printf("Underflow!\n");
-        return -1;
+// ----- Delete Left -----
+void delete_left() {
+    if (isEmpty()) {
+        printf("Deque is EMPTY!\n");
+        return;
     }
-    printf("The deleted element is: %d\n", queue[right]);
-    if (left == right) {
-        left = right = -1;
-    } else if (right == 0) {
-        right = SIZE - 1;
+
+    printf("Deleted %d\n", deque[front]);
+
+    if (front == rear) {  
+        front = rear = -1;   // deque becomes empty
     } else {
-        right--;
+        front = (front + 1) % SIZE;
     }
-    return 0;
 }
 
-int dequeue_left() {
-    if (left == -1) {
-        printf("Underflow!\n");
-        return -1;
+// ----- Delete Right -----
+void delete_right() {
+    if (isEmpty()) {
+        printf("Deque is EMPTY!\n");
+        return;
     }
-    printf("The deleted element is: %d\n", queue[left]);
-    if (left == right) {
-        left = right = -1;
-    } else if (left == SIZE - 1) {
-        left = 0;
+
+    printf("Deleted %d\n", deque[rear]);
+
+    if (front == rear) {
+        front = rear = -1;
     } else {
-        left++;
+        rear = (rear - 1 + SIZE) % SIZE;  // wrap-around backward
     }
-    return 0;
 }
 
+// ----- Display -----
 void display() {
-    if (left == -1) {
-        printf("Queue is empty!\n");
+    if (isEmpty()) {
+        printf("Deque is EMPTY!\n");
         return;
     }
-    printf("The elements of the queue are:\n");
-    int i = left;
+
+    printf("Deque elements: ");
+    int i = front;
+
     while (1) {
-        printf("%d\t", queue[i]);
-        if (i == right)
+        printf("%d ", deque[i]);
+        if (i == rear)
             break;
         i = (i + 1) % SIZE;
     }
     printf("\n");
+}
+
+// ----- Main -----
+int main() {
+    int choice, val;
+
+    while (1) {
+        printf("\n---- DEQUE MENU ----\n");
+        printf("1. Insert Left\n");
+        printf("2. Insert Right\n");
+        printf("3. Delete Left\n");
+        printf("4. Delete Right\n");
+        printf("5. Display\n");
+        printf("6. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &val);
+                insert_left(val);
+                break;
+
+            case 2:
+                printf("Enter value: ");
+                scanf("%d", &val);
+                insert_right(val);
+                break;
+
+            case 3:
+                delete_left();
+                break;
+
+            case 4:
+                delete_right();
+                break;
+
+            case 5:
+                display();
+                break;
+
+            case 6:
+                exit(0);
+
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+    return 0;
 }
