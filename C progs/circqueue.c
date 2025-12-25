@@ -41,10 +41,7 @@ int isEmpty(){
 }
 
 int isFull(){
-	if(front == (rear+1)%SIZE){
-		return 1;
-	}
-	return 0;
+    return ((rear + 1) % SIZE == front);
 }
 
 int enqueue(int value){
