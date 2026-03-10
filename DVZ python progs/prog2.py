@@ -1,0 +1,21 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_csv("Dataset_Ques_1_4.csv")
+plt.figure(figsize = (10,5))
+plt.plot(df["month_number"],df["total_profit"],linestyle = 'dashed',linewidth = 2,marker = 's',color = 'green')
+plt.xlabel("months")
+plt.ylabel("Total profit")
+plt.legend(loc = 'lower right')
+plt.xticks(rotation = 45)
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize = (10,5))
+plt.bar(df["month_number"],df["toothpaste"],color = 'blue')
+plt.xlabel("months")
+plt.ylabel("toothpaste sales")
+plt.legend(loc = 'lower right')
+plt.xticks(rotation = 45)
+plt.yticks(rotation = 30)
+plt.grid(axis = 'y')
+plt.show()
