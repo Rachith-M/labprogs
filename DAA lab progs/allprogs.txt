@@ -1,0 +1,322 @@
+DAA LAB PROGRAM 1 BFS
+
+
+
+#include <stdio.h>
+#define size 20
+#define true 1
+#define False 0
+int queue[size],visit[20],rear=1,front=0;
+int n,s,adj[20][20],flag=0;
+void insertq(int v)
+{
+    queue[++rear]=v;
+
+}
+int deleteq()
+{
+    return(queue[front++]);
+}
+
+int qempty()
+{
+    if(rear<front)
+        return 1;
+    else
+        return 0;
+}
+void bfs(int v)
+{
+    int w;
+    visit[v]=1;
+    insertq(v);
+    while(!qempty())
+    {
+        v=deleteq();
+        for(w=1;w<=n;w++)
+        if((adj[v][w]==1)&& (visit[w]==0))
+        {
+            visit[w]=1;
+            flag=1;
+            printf("v%d\t",w);
+            insertq(w);
+
+
+        }
+    }
+
+}
+
+void main(){
+int v,w;
+printf("Enter the no. of vertices:\n");
+scanf("%d",&n);
+printf("Enter the adjacency matrix:\n");
+for(v=1;v<=n;v++)
+{
+    for(w=1;w<=n;w++)
+        scanf("%d",&adj[v][w]);
+}
+printf("Enter the Start vertex:");
+scanf("%d",&s);
+printf("Reachability of vertex %d\n",s);
+for(v=1;v<=n;v++)
+    visit[v]=0;
+bfs(s);
+
+if (flag==0)
+{
+    printf("No path found!!\n");
+}
+
+}
+
+
+
+
+DAA LAB PROGRAM 1b DFS
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int adj[MAX][MAX];
+int visited[MAX];
+
+
+void DFS(int node, int n) {
+    visited[node] = 1;
+    for (int i = 0; i < n; i++) {
+        if (adj[node][i] == 1 && !visited[i]) {
+            DFS(i, n);
+        }
+    }
+}
+
+
+int isConnected(int n) {
+
+    for (int i = 0; i < n; i++) {
+        visited[i] = 0;
+    }
+
+
+    DFS(0, n);
+
+
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int n, e;
+    int u, v;
+
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &e);
+
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            adj[i][j] = 0;  // No edges initially
+        }
+        visited[i] = 0;  // Mark all nodes as unvisited
+    }
+
+
+    printf("Enter the edges (u v):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d %d", &u, &v);
+        adj[u][v] = 1;
+        adj[v][u] = 1;
+    }
+
+    if (isConnected(n)) {
+        printf("The graph is connected.\n");
+    } else {
+        printf("The graph is not connected.\n");
+    }
+
+    return 0;
+}
+
+
+------------------------------------
+
+
+daa lab program 2
+using dfs
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
+
+int adj[MAX][MAX];
+int visited[MAX];
+int stack[MAX];
+int top = -1;
+
+void push(int v) {
+    stack[++top] = v;
+}
+
+void DFS(int node, int n) {
+    visited[node] = 1;
+    for (int i = 0; i < n; i++) {
+        if (adj[node][i] == 1 && !visited[i]) {
+            DFS(i, n);  // Pass n here to match the function signature
+        }
+    }
+    push(node);
+}
+
+void topologicalSort(int n) {
+    for (int i = 0; i < n; i++) {
+        visited[i] = 0;
+    }
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            DFS(i, n);  // Pass n here
+        }
+    }
+    printf("Topological ordering of vertices: ");
+    while (top != -1) {
+        printf("%d ", stack[top--]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int n, e;
+    int u, v;
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+    printf("Enter the number of edges: ");
+    scanf("%d", &e);
+
+    // Initialize the adjacency matrix
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            adj[i][j] = 0;
+        }
+    }
+
+    printf("Enter the edges (u v):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d %d", &u, &v);
+        adj[u][v] = 1;  // Mark edge from u to v
+    }
+
+    topologicalSort(n);  // Perform topological sort
+    return 0;
+}
+
+
+--------------------
+using source removal
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int adj[MAX][MAX];
+int in_degree[MAX];  // In-degree array to store the number of incoming edges for each node
+int queue[MAX];  // Queue to store nodes with zero in-degree
+int front = 0, rear = 0;
+
+void topologicalSort(int n) {
+    // Initialize the in-degree array
+    for (int i = 0; i < n; i++) {
+        in_degree[i] = 0;
+    }
+
+    // Calculate in-degree for each node
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (adj[i][j] == 1) {
+                in_degree[j]++;
+            }
+        }
+    }
+
+    // Enqueue all nodes with zero in-degree
+    for (int i = 0; i < n; i++) {
+        if (in_degree[i] == 0) {
+            queue[rear++] = i;
+        }
+    }
+
+    int count = 0;  // To count the number of nodes processed
+    printf("Topological ordering of vertices: ");
+
+    // Process the queue
+    while (front < rear) {
+        int node = queue[front++];
+        printf("%d ", node);
+        count++;
+
+        // Decrease the in-degree of adjacent nodes and enqueue if in-degree becomes zero
+        for (int i = 0; i < n; i++) {
+            if (adj[node][i] == 1) {
+                in_degree[i]--;
+                if (in_degree[i] == 0) {
+                    queue[rear++] = i;
+                }
+            }
+        }
+    }
+
+    // If count doesn't match n, there is a cycle
+    if (count != n) {
+        printf("\nThe graph has a cycle, so a topological sort is not possible.\n");
+    } else {
+        printf("\n");
+    }
+}
+
+int main() {
+    int n, e;
+    int u, v;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+    printf("Enter the number of edges: ");
+    scanf("%d", &e);
+
+    // Initialize the adjacency matrix
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            adj[i][j] = 0;
+        }
+    }
+
+    printf("Enter the edges (u v):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d %d", &u, &v);
+        adj[u][v] = 1;  // Mark edge from u to v
+    }
+
+    topologicalSort(n);  // Perform topological sort using source-removal (Kahn's algorithm)
+
+    return 0;
+}
+
+
+------------------------
